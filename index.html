@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <title>CONVERSOR DE MOEDAS</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">CONVERSOR DE MOEDAS</h1>
+        <p class="page-subtitle">Descubra os valores de REAIS em Dolar Americano U$ ou Euro € ou em BITCOIN ₿</p>
+        <img src="assents/acslogo.png" alt="" class="page-logo">
+
+        <label for="moeda">INSIRA O VALOR EM</label><br>
+        <select name="select1" class="select" id="id1">
+            <option value="BRL">REAL</option>
+            <option value="USD">DOLAR</option>
+            <option value="EUR">EURO</option>
+            <option value="BTC">BITCOIN</option>
+        </select>
+        <input type="number" id="valor" size="2" placeholder="R$: 10.000,00"><br>
+
+        <label>DESEJA CONVERTER EM</label><br>
+        <select name="select" class="select" id="id">
+            <option value="BRL">REAL</option>
+            <option value="USD">DOLAR</option>
+            <option value="EUR">EURO</option>
+            <option value="BTC">BITCOIN</option>
+        </select>
+        <button type="submit" onclick="converter()">Converter</button>
+        <h2 id="valorConvertido" style="display: none;"></h2>
+    </div>
+    <script src="./script.js"></script>
+</body>
+</html>
