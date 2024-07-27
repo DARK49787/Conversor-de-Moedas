@@ -1,6 +1,4 @@
-# **Nome do Projeto:** Conversor de Moedas
-
-# **Descrição:**  
+# ** Conversor de Moedas**  
 Este projeto é um conversor de moedas web que permite converter valores entre Real (BRL), Dólar Americano (USD), Euro (EUR) e Bitcoin (BTC). Utilizando a API da AwesomeAPI para obter taxas de câmbio atualizadas, o usuário pode inserir um valor e escolher a moeda de origem e de destino para obter a conversão precisa.
 
 # **Funcionalidades:**  
