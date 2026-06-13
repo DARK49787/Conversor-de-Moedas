@@ -66,8 +66,15 @@ async function serveStatic(req, res) {
   }
 
   try {
-    const fileContent = await fs.readFile(filePath);
-    const extension = path.extname(filePath).toLowerCase();
+    let targetPath = filePath;
+    const fileStats = await fs.stat(filePath);
+
+    if (fileStats.isDirectory()) {
+      targetPath = path.join(filePath, "index.html");
+    }
+
+    const fileContent = await fs.readFile(targetPath);
+    const extension = path.extname(targetPath).toLowerCase();
     const contentType = MIME_TYPES[extension] || "application/octet-stream";
 
     res.writeHead(200, { "Content-Type": contentType });
