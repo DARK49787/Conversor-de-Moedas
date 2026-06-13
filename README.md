@@ -6,6 +6,8 @@ Aplicação web para converter valores entre Real (BRL), Dólar (USD), Euro (EUR
 - Conversão entre BRL, USD, EUR e BTC.
 - Interface limpa e adaptável para desktop, tablet e celular.
 - Backend com endpoint `/api/rates` para centralizar a busca de cotações.
+- Endpoint `/api/compare` para gerar micro comparações de preço entre moedas.
+- Endpoint `/api/export.csv` para exportar a tabela comparativa em CSV.
 - Validação de entrada e mensagens de erro/sucesso para melhor experiência.
 
 ## Como executar

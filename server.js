@@ -4,6 +4,7 @@ const path = require("node:path");
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = __dirname;
+const SUPPORTED_CURRENCIES = ["BRL", "USD", "EUR", "BTC"];
 const FALLBACK_RATES = {
   BRL: 1,
   USD: 5.35,
@@ -30,6 +31,32 @@ function jsonResponse(res, statusCode, payload) {
   res.end(JSON.stringify(payload));
 }
 
+function csvResponse(res, statusCode, content, fileName) {
+  res.writeHead(statusCode, {
+    "Content-Type": "text/csv; charset=utf-8",
+    "Content-Disposition": `attachment; filename="${fileName}"`,
+    "Cache-Control": "no-store",
+  });
+  res.end(content);
+}
+
+function parseAmount(rawAmount) {
+  const amount = Number(rawAmount);
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return null;
+  }
+  return amount;
+}
+
+function parseSource(rawSource) {
+  if (!rawSource) {
+    return "BRL";
+  }
+
+  const source = rawSource.toUpperCase();
+  return SUPPORTED_CURRENCIES.includes(source) ? source : null;
+}
+
 async function getRates() {
   const response = await fetch("https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL,BTC-BRL", {
     signal: AbortSignal.timeout(4000),
@@ -48,6 +75,28 @@ async function getRates() {
     BTC: Number(data.BTCBRL.high),
     _fallback: false,
   };
+}
+
+function convertAmount(amount, source, target, rates) {
+  if (source === target) {
+    return amount;
+  }
+
+  const inBrl = amount * rates[source];
+  return inBrl / rates[target];
+}
+
+function buildComparison(amount, source, rates) {
+  return SUPPORTED_CURRENCIES.map((currency) => ({
+    currency,
+    value: convertAmount(amount, source, currency, rates),
+  }));
+}
+
+function toCsvRows(rows) {
+  const header = "currency,value";
+  const contentRows = rows.map((row) => `${row.currency},${row.value}`);
+  return [header, ...contentRows].join("\n");
 }
 
 async function serveStatic(req, res) {
@@ -94,6 +143,50 @@ const server = http.createServer(async (req, res) => {
       jsonResponse(res, 200, rates);
     } catch {
       jsonResponse(res, 200, { ...FALLBACK_RATES, _fallback: true });
+    }
+
+    return;
+  }
+
+  if (req.method === "GET" && requestUrl.pathname === "/api/compare") {
+    const amount = parseAmount(requestUrl.searchParams.get("amount"));
+    const source = parseSource(requestUrl.searchParams.get("source"));
+
+    if (amount === null || source === null) {
+      jsonResponse(res, 400, { error: "Parâmetros inválidos para comparação." });
+      return;
+    }
+
+    try {
+      const rates = await getRates();
+      const comparisons = buildComparison(amount, source, rates);
+      jsonResponse(res, 200, { amount, source, fallback: false, comparisons });
+    } catch {
+      const comparisons = buildComparison(amount, source, FALLBACK_RATES);
+      jsonResponse(res, 200, { amount, source, fallback: true, comparisons });
+    }
+
+    return;
+  }
+
+  if (req.method === "GET" && requestUrl.pathname === "/api/export.csv") {
+    const amount = parseAmount(requestUrl.searchParams.get("amount"));
+    const source = parseSource(requestUrl.searchParams.get("source"));
+
+    if (amount === null || source === null) {
+      jsonResponse(res, 400, { error: "Parâmetros inválidos para exportação." });
+      return;
+    }
+
+    try {
+      const rates = await getRates();
+      const comparisons = buildComparison(amount, source, rates);
+      const csvContent = toCsvRows(comparisons);
+      csvResponse(res, 200, csvContent, "comparacao-moedas.csv");
+    } catch {
+      const comparisons = buildComparison(amount, source, FALLBACK_RATES);
+      const csvContent = toCsvRows(comparisons);
+      csvResponse(res, 200, csvContent, "comparacao-moedas.csv");
     }
 
     return;
