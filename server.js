@@ -68,12 +68,19 @@ async function getRates() {
   }
 
   const data = await response.json();
+  const usdRate = Number(data.USDBRL?.high);
+  const eurRate = Number(data.EURBRL?.high);
+  const btcRate = Number(data.BTCBRL?.high);
+
+  if (![usdRate, eurRate, btcRate].every((rate) => Number.isFinite(rate) && rate > 0)) {
+    throw new Error("Resposta inválida da API de cotações.");
+  }
 
   return {
     BRL: 1,
-    USD: Number(data.USDBRL.high),
-    EUR: Number(data.EURBRL.high),
-    BTC: Number(data.BTCBRL.high),
+    USD: usdRate,
+    EUR: eurRate,
+    BTC: btcRate,
     _fallback: false,
   };
 }
@@ -102,10 +109,18 @@ function toCsvRows(rows) {
 
 async function serveStatic(req, res) {
   const requestUrl = new URL(req.url || "/", "http://localhost");
-  const safeRelativePath =
-    requestUrl.pathname === "/"
-      ? "index.html"
-      : decodeURIComponent(requestUrl.pathname).replace(/^\/+/, "");
+  let safeRelativePath;
+
+  try {
+    safeRelativePath =
+      requestUrl.pathname === "/"
+        ? "index.html"
+        : decodeURIComponent(requestUrl.pathname).replace(/^\/+/, "");
+  } catch {
+    res.writeHead(400, { "Content-Type": "text/plain; charset=utf-8" });
+    res.end("Requisição inválida");
+    return;
+  }
   const publicRoot = path.resolve(PUBLIC_DIR);
   const filePath = path.resolve(publicRoot, safeRelativePath);
 
