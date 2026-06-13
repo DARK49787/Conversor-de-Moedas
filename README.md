@@ -1,18 +1,28 @@
-# **Conversor de Moedas**  
-Este projeto é um conversor de moedas web que permite converter valores entre Real (BRL), Dólar Americano (USD), Euro (EUR) e Bitcoin (BTC). Utilizando a API da AwesomeAPI para obter taxas de câmbio atualizadas, o usuário pode inserir um valor e escolher a moeda de origem e de destino para obter a conversão precisa.
+# Conversor de Moedas
 
-# **Funcionalidades**  
-- Converte valores entre BRL, USD, EUR e BTC.
-- Interface amigável e responsiva.
-- Atualiza o valor convertido apenas após a solicitação ser realizada.
+Aplicação web para converter valores entre Real (BRL), Dólar (USD), Euro (EUR) e Bitcoin (BTC), com frontend responsivo e backend leve em Node.js.
 
-# **Como Usar**  
-1. Insira o valor desejado no campo de entrada.  
-2. Escolha a moeda de origem e a moeda de destino.  
-3. Clique no botão "Converter".  
-4. Visualize o valor convertido no painel de resultados.
+## Funcionalidades
+- Conversão entre BRL, USD, EUR e BTC.
+- Interface limpa e adaptável para desktop, tablet e celular.
+- Backend com endpoint `/api/rates` para centralizar a busca de cotações.
+- Endpoint `/api/compare` para gerar micro comparações de preço entre moedas.
+- Endpoint `/api/export.csv` para exportar a tabela comparativa em CSV.
+- Validação de entrada e mensagens de erro/sucesso para melhor experiência.
 
-# **Tecnologias Utilizadas**  
-- HTML  
-- CSS  
+## Como executar
+1. Instale o Node.js 18+.
+2. No diretório do projeto, execute:
+   ```bash
+   npm start
+   ```
+3. Acesse no navegador:
+   ```
+   http://localhost:3000
+   ```
+
+## Tecnologias utilizadas
+- HTML
+- CSS
 - JavaScript
+- Node.js (HTTP nativo)

@@ -1,0 +1,9 @@
+{
+  "name": "conversor-de-moedas",
+  "version": "1.0.0",
+  "description": "Conversor de moedas com backend e frontend responsivo.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  }
+}
