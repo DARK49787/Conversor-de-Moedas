@@ -61,8 +61,8 @@ form.addEventListener("submit", async (event) => {
 
   resultOutput.textContent = "";
 
-  if (!Number.isFinite(amount) || amount < 0) {
-    setStatus("Informe um valor válido para conversão.", "error");
+  if (!Number.isFinite(amount) || amount <= 0) {
+    setStatus("Informe um valor maior que zero para conversão.", "error");
     return;
   }
 
@@ -73,9 +73,14 @@ form.addEventListener("submit", async (event) => {
     const rates = await fetchRates();
     const converted = convertAmount(amount, source, target, rates);
     resultOutput.textContent = formatCurrency(converted, target);
-    setStatus("Conversão realizada com sucesso.", "success");
-  } catch (error) {
-    setStatus(error.message || "Erro inesperado ao converter.", "error");
+    setStatus(
+      rates._fallback
+        ? "Conversão realizada com cotação de contingência."
+        : "Conversão realizada com sucesso.",
+      "success"
+    );
+  } catch {
+    setStatus("Não foi possível converter agora. Tente novamente em instantes.", "error");
   } finally {
     convertButton.disabled = false;
   }

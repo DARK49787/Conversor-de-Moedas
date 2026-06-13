@@ -46,6 +46,7 @@ async function getRates() {
     USD: Number(data.USDBRL.high),
     EUR: Number(data.EURBRL.high),
     BTC: Number(data.BTCBRL.high),
+    _fallback: false,
   };
 }
 
@@ -83,7 +84,7 @@ const server = http.createServer(async (req, res) => {
       const rates = await getRates();
       jsonResponse(res, 200, rates);
     } catch {
-      jsonResponse(res, 200, FALLBACK_RATES);
+      jsonResponse(res, 200, { ...FALLBACK_RATES, _fallback: true });
     }
 
     return;
