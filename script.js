@@ -41,7 +41,7 @@ function renderComparisonTable(comparisons) {
     const currencyCell = document.createElement("td");
     const valueCell = document.createElement("td");
 
-    currencyCell.textContent = `${item.currency}`;
+    currencyCell.textContent = item.currency;
     valueCell.textContent = formatCurrency(item.value, item.currency);
 
     row.append(currencyCell, valueCell);
@@ -110,7 +110,8 @@ form.addEventListener("submit", async (event) => {
         : "Conversão realizada com sucesso.",
       "success"
     );
-  } catch {
+  } catch (error) {
+    console.error("Falha ao converter e montar comparações:", error);
     exportButton.disabled = true;
     setEmptyComparisonTable("Falha ao gerar comparações no momento.");
     setStatus("Não foi possível converter agora. Tente novamente em instantes.", "error");
