@@ -142,7 +142,8 @@ const server = http.createServer(async (req, res) => {
     try {
       const rates = await getRates();
       jsonResponse(res, 200, rates);
-    } catch {
+    } catch (error) {
+      console.error("Falha ao buscar taxas externas para /api/rates:", error);
       jsonResponse(res, 200, { ...FALLBACK_RATES, _fallback: true });
     }
 
@@ -162,7 +163,8 @@ const server = http.createServer(async (req, res) => {
       const rates = await getRates();
       const comparisons = buildComparison(amount, source, rates);
       jsonResponse(res, 200, { amount, source, fallback: false, comparisons });
-    } catch {
+    } catch (error) {
+      console.error("Falha ao buscar taxas externas para /api/compare:", error);
       const comparisons = buildComparison(amount, source, FALLBACK_RATES);
       jsonResponse(res, 200, { amount, source, fallback: true, comparisons });
     }
@@ -184,7 +186,8 @@ const server = http.createServer(async (req, res) => {
       const comparisons = buildComparison(amount, source, rates);
       const csvContent = toCsvRows(comparisons);
       csvResponse(res, 200, csvContent, "comparacao-moedas.csv");
-    } catch {
+    } catch (error) {
+      console.error("Falha ao buscar taxas externas para /api/export.csv:", error);
       const comparisons = buildComparison(amount, source, FALLBACK_RATES);
       const csvContent = toCsvRows(comparisons);
       csvResponse(res, 200, csvContent, "comparacao-moedas.csv");

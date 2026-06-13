@@ -15,12 +15,6 @@ const currencyLocale = {
   BTC: "en-US",
 };
 
-const currencyCode = {
-  USD: "USD",
-  BRL: "BRL",
-  EUR: "EUR",
-  BTC: "BTC",
-};
 const BTC_PRECISION = 8;
 const DEFAULT_PRECISION = 2;
 
@@ -34,7 +28,7 @@ function setStatus(message, type = "info") {
 function formatCurrency(value, currency) {
   return new Intl.NumberFormat(currencyLocale[currency], {
     style: "currency",
-    currency: currencyCode[currency],
+    currency,
     minimumFractionDigits: currency === "BTC" ? BTC_PRECISION : DEFAULT_PRECISION,
   }).format(value);
 }
