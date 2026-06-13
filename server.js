@@ -4,6 +4,7 @@ const path = require("node:path");
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = __dirname;
+const API_TIMEOUT_MS = 4000;
 const SUPPORTED_CURRENCIES = ["BRL", "USD", "EUR", "BTC"];
 const FALLBACK_RATES = {
   BRL: 1,
@@ -59,7 +60,7 @@ function parseSource(rawSource) {
 
 async function getRates() {
   const response = await fetch("https://economia.awesomeapi.com.br/last/USD-BRL,EUR-BRL,BTC-BRL", {
-    signal: AbortSignal.timeout(4000),
+    signal: AbortSignal.timeout(API_TIMEOUT_MS),
   });
 
   if (!response.ok) {

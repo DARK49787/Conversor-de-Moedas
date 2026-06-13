@@ -21,6 +21,8 @@ const currencyCode = {
   EUR: "EUR",
   BTC: "BTC",
 };
+const BTC_PRECISION = 8;
+const DEFAULT_PRECISION = 2;
 
 let lastComparisonParams = null;
 
@@ -33,7 +35,7 @@ function formatCurrency(value, currency) {
   return new Intl.NumberFormat(currencyLocale[currency], {
     style: "currency",
     currency: currencyCode[currency],
-    minimumFractionDigits: currency === "BTC" ? 8 : 2,
+    minimumFractionDigits: currency === "BTC" ? BTC_PRECISION : DEFAULT_PRECISION,
   }).format(value);
 }
 
