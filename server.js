@@ -50,16 +50,16 @@ async function getRates() {
   };
 }
 
-function sanitizePath(urlPath) {
-  const normalized = path.normalize(urlPath).replace(/^(\.\.(\/|\\|$))+/, "");
-  return normalized === "/" ? "/index.html" : normalized;
-}
-
 async function serveStatic(req, res) {
-  const safePath = sanitizePath(req.url || "/");
-  const filePath = path.join(PUBLIC_DIR, safePath);
+  const requestUrl = new URL(req.url || "/", "http://localhost");
+  const safeRelativePath =
+    requestUrl.pathname === "/"
+      ? "index.html"
+      : decodeURIComponent(requestUrl.pathname).replace(/^\/+/, "");
+  const publicRoot = path.resolve(PUBLIC_DIR);
+  const filePath = path.resolve(publicRoot, safeRelativePath);
 
-  if (!filePath.startsWith(PUBLIC_DIR)) {
+  if (filePath !== publicRoot && !filePath.startsWith(`${publicRoot}${path.sep}`)) {
     res.writeHead(403);
     res.end("Acesso negado");
     return;
@@ -79,7 +79,9 @@ async function serveStatic(req, res) {
 }
 
 const server = http.createServer(async (req, res) => {
-  if (req.method === "GET" && req.url === "/api/rates") {
+  const requestUrl = new URL(req.url || "/", "http://localhost");
+
+  if (req.method === "GET" && requestUrl.pathname === "/api/rates") {
     try {
       const rates = await getRates();
       jsonResponse(res, 200, rates);
